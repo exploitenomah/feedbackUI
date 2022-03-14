@@ -29,7 +29,7 @@ export const FeedbackProvider = ({ children }) => {
     setFeedbackState((prevState) => {
         return {
             ...prevState, 
-            feedbacks: data
+            feedbacks: data || []
         }
     })
   }
@@ -42,8 +42,8 @@ export const FeedbackProvider = ({ children }) => {
     )
     setFeedbackState(prevState => {
         return {
-            ...prevState,
-            feedbacks: [recentFeedback, ...prevState.feedbacks]
+          ...prevState,
+          feedbacks: [newFeedback, ...prevState.feedbacks],
         }
     })
   } 
@@ -61,6 +61,14 @@ export const FeedbackProvider = ({ children }) => {
             }
           })
      }
+               setFeedbackState((prevState) => {
+                 return {
+                   ...prevState,
+                   feedbacks: prevState.feedbacks.filter((feedback) => {
+                     return feedback.id !== id && feedback
+                   }),
+                 }
+               })
   }
   const editFeedback = (id) => {
       setFeedbackState(prevState => {
@@ -84,7 +92,7 @@ export const FeedbackProvider = ({ children }) => {
           return {
             ...prevState,
             feedbacks: prevState.feedbacks.map((feedback) => {
-              return feedback.id === recentFeedback.id && recentFeedback
+              return feedback.id === updFeedback.id && updFeedback
             }),
             feedbackEdit: {
               item: [],
