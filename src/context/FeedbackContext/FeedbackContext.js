@@ -10,65 +10,79 @@ export const FeedbackProvider = ({ children }) => {
   useEffect(() => {
     fetchFeedbacks()
   }, [])
-  const fetchFunction = async (url, method, headers, body) => {
-    const response = await fetch(url, {
-    method: method,
-    headers: headers ? headers : '',
-    body: JSON.stringify(body)
-    })
-    const data = await response.json()
-    return data
+  const fetchFunction = (body, method) => {
+    let lsFeedbacks =  JSON.parse(localStorage.getItem('feedbacks')) || []
+    let feedbacks
+    switch (method) {
+      case 'POST':
+        feedbacks = [body, ...lsFeedbacks]
+        setFeedbackState((prevState) => {
+          return {
+            ...prevState,
+            feedbacks: feedbacks,
+          }
+        })
+        localStorage.setItem('feedbacks', JSON.stringify(feedbacks) )
+        break
+      case 'PUT':
+       feedbacks = lsFeedbacks.map(feedback => {
+          return feedback.id === body.id ? body : feedback
+        })       
+        setFeedbackState((prevState) => {
+          return {
+            ...prevState,
+            feedbacks: feedbacks,
+          }
+        })
+        localStorage.setItem('feedbacks', JSON.stringify(feedbacks))
+        break
+      case 'DELETE':
+       feedbacks = lsFeedbacks.filter(feedback => {
+         return feedback.id !== body.id && feedback
+       })
+       setFeedbackState(prevState => {
+         return {
+           ...prevState,
+           feedbacks: feedbacks
+         }
+       })
+       localStorage.setItem('feedbacks', JSON.stringify(feedbacks))
+        break
+      default:
+        break
+    } 
   }
   const focusInput = () => {
-    console.log(inputRef.current)
-    inputRef.current.focus()
+     inputRef.current.focus()
   }
-  const fetchFeedbacks = async () => { 
-    const response = await fetch(`/feedback?_sort=id&_order=desc`)
-    const data = await response.json()
+  const fetchFeedbacks = () => { 
+    let lsFeedbacks = JSON.parse(localStorage.getItem('feedbacks')) || []
     setFeedbackState((prevState) => {
         return {
             ...prevState, 
-            feedbacks: data || []
+            feedbacks: lsFeedbacks
         }
     })
   }
-  const addFeedback = async (newFeedback) => {
-    const recentFeedback = await fetchFunction(
-      '/feedback',
-      'POST',
-      { 'Content-Type': 'application/json' },
-      newFeedback
-    )
-    setFeedbackState(prevState => {
-        return {
-          ...prevState,
-          feedbacks: [newFeedback, ...prevState.feedbacks],
-        }
-    })
+  const addFeedback =  (newFeedback) => {
+    fetchFunction(newFeedback, 'POST')
   } 
-  const deleteFeedback = async (id) => {
-      if (window.confirm('Are you sure you want to delete?')) {
-         await fetch(`/feedback/${id}`, {
-           method: 'DELETE',
-         })
-          setFeedbackState((prevState) => {
-            return {
-              ...prevState,
-              feedbacks: prevState.feedbacks.filter((feedback) => {
-                return feedback.id !== id && feedback
-              }),
-            }
-          })
-     }
-               setFeedbackState((prevState) => {
-                 return {
-                   ...prevState,
-                   feedbacks: prevState.feedbacks.filter((feedback) => {
-                     return feedback.id !== id && feedback
-                   }),
-                 }
-               })
+  const updateFeedback = async (updFeedback) => {
+    fetchFunction(updFeedback, 'PUT')
+    setFeedbackState(prevState => {
+      return {
+        ...prevState,
+        feedbackEdit: {
+          item: {},
+          edit: false
+        }
+      }
+    })
+  }
+  const deleteFeedback = (feedback) => {
+    if (window.confirm('Are you sure you want to delete?')) {
+      fetchFunction(feedback, 'DELETE')
+    }
   }
   const editFeedback = (id) => {
       setFeedbackState(prevState => {
@@ -79,26 +93,6 @@ export const FeedbackProvider = ({ children }) => {
                 edit: true 
             }
           }
-      })
-  }
-  const updateFeedback = async (updFeedback) => {
-      const recentFeedback = await fetchFunction(
-        `/feedback/${updFeedback.id}`,
-        'PUT',
-        { 'Content-Type': 'application/json' },
-        updFeedback
-      )
-      setFeedbackState(prevState => {
-          return {
-            ...prevState,
-            feedbacks: prevState.feedbacks.map((feedback) => {
-              return feedback.id === updFeedback.id && updFeedback
-            }),
-            feedbackEdit: {
-              item: [],
-              edit: false,
-            },
-          };
       })
   }
     return (

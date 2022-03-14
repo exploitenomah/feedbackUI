@@ -32,7 +32,7 @@ const FeedbackList = () => {
                </button>
                <button
                  onClick={() => {
-                   deleteFeedback(feedback.id);
+                   deleteFeedback(feedback);
                  }}
                >
                  <FaTimes color="purple" />
