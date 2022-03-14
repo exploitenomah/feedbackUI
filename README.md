@@ -1,15 +1,15 @@
 # A Feedback UI with create-react-app
 
-The to the deployed project [Feedback UI](https://github.io/exploitenomahchangethisasap).
+The to the deployed project [Feedback UI](https://awesome-kilby-18157b.netlify.app/).
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm dev`
+### `npm start`
 
 Runs the app in the development mode.\
-Uses Concurrently package to run json-server along side the start script.\
+This branch uses local storage instead of json servers\
 Open [http://localhost:3005](http://localhost:3005) to view it in your browser.
 
 The page will reload when you make changes.\
