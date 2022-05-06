@@ -1,6 +1,6 @@
 # A Feedback UI with create-react-app
 
-The to the deployed project [Feedback UI](https://awesome-kilby-18157b.netlify.app/).
+The link to the deployed project >>> [Feedback UI](https://awesome-kilby-18157b.netlify.app/).
 
 ## Available Scripts
 
